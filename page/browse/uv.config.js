@@ -1,10 +1,10 @@
 self.__uv$config = {
   prefix: '/service/',
-  bare: 'https://eugenex-server.onrender.com/bare/',  // ← absolute URL, correct path
+  bare: 'https://eugenex-server.onrender.com/bare/',
   encodeUrl: Ultraviolet.codec.xor.encode,
   decodeUrl: Ultraviolet.codec.xor.decode,
-  handler: '/uv/uv.handler.js',
-  bundle: '/uv/uv.bundle.js',
-  config: '/uv/uv.config.js',
-  sw: '/uv/uv.sw.js',
+  handler: '/page/browse/uv.handler.js',
+  bundle: 'https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@latest/dist/uv.bundle.js',
+  config: '/page/browse/uv.config.js',
+  sw: '/page/browse/uv.sw.js',
 };
