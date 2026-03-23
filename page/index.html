@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAVPAGE</title>
+<link rel="icon" type="image/png" href="images/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-left: 80px;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .nav-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .nav-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    line-height: 1;
+  }
+
+  a {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: #3a8fcf;
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 0;
+    transition: color 0.2s;
+    width: fit-content;
+  }
+
+  a:hover { color: #00c8ff; }
+
+  .l1 { padding-left: 0; }
+  .l2 { padding-left: 32px; }
+  .l3 { padding-left: 64px; }
+</style>
+</head>
+<body>
+<nav>
+  <img src="images/icon.png" alt="Logo" class="nav-logo">
+  <div class="nav-title">Title</div>
+
+  <a href="https://example.com" class="l1">Button1</a>
+  <a href="https://example.com" class="l2">Button2</a>
+  <a href="https://example.com" class="l3">Button3</a>
+</nav>
+</body>
+</html>
