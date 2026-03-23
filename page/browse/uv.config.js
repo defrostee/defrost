@@ -1,6 +1,6 @@
 self.__uv$config = {
   prefix: '/service/',
-  bare: '/bare/',
+  bare: 'https://eugenex-server.onrender.com/bare/',  // ← absolute URL, correct path
   encodeUrl: Ultraviolet.codec.xor.encode,
   decodeUrl: Ultraviolet.codec.xor.decode,
   handler: '/uv/uv.handler.js',
