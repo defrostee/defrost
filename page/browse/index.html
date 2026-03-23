@@ -166,21 +166,157 @@
     overflow: hidden;
     transition: border-color 0.3s;
     height: 0;
-    opacity: 0;
-  }
-  .frame-wrap.visible {
-    height: 420px;
-    opacity: 1;
-    border-color: #3a8fcf;
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEFROST — EUGENEX</title>
+<link rel="icon" type="image/png" href="../../images/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; scrollbar-width: none; overflow: hidden; }
+  ::-webkit-scrollbar { display: none; }
+
+  body {
+    background: #000;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    color: #3a8fcf;
   }
 
-  #proxy-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-    background: #000;
+  .container {
+    width: min(900px, 92vw);
+    display: flex;
+    flex-direction: column;
   }
+
+  .back {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #3a8fcf;
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: color 0.2s;
+  }
+  .back:hover { color: #00c8ff; }
+
+  .page-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .page-sub {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #1e4d7b;
+    margin-bottom: 22px;
+  }
+
+  .url-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  #url-input {
+    flex: 1;
+    background: #000;
+    border: 1px solid #1a3a5c;
+    color: #a8d8f0;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #url-input::placeholder { color: #1e4d7b; }
+  #url-input:focus { border-color: #3a8fcf; }
+
+  .go-btn {
+    background: #000;
+    border: 1px solid #1a3a5c;
+    color: #3a8fcf;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .go-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #1e4d7b;
+    margin-bottom: 10px;
+  }
+
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(6px, 1vw, 10px);
+    margin-bottom: 16px;
+  }
+
+  .quick-card {
+    background: #0a0a0a;
+    border: 1px solid #1a3a5c;
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+  }
+  .quick-card:hover { border-color: #00c8ff; transform: translateY(-2px); }
+
+  .quick-icon { font-size: 18px; line-height: 1; }
+  .quick-label {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #3a8fcf;
+  }
+
+  .error-msg {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7b1e1e;
+    min-height: 14px;
+    margin-bottom: 8px;
+  }
+
+  /* Frame */
+  .frame-wrap {
+    border: 1px solid #1a3a5c;
+    background: #0a0a0a;
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+  }
+  .frame-wrap.visible { display: flex; }
 
   .frame-toolbar {
     display: flex;
@@ -189,50 +325,47 @@
     padding: 6px 10px;
     background: #050505;
     border-bottom: 1px solid #1a3a5c;
+    flex-shrink: 0;
+  }
+
+  .frame-toolbar-label {
     font-size: 9px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     color: #1e4d7b;
+    white-space: nowrap;
   }
-  .frame-url {
+
+  .frame-url-display {
     flex: 1;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    color: #3a8fcf;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #3a8fcf;
-    font-size: 9px;
+    font-family: 'Space Mono', monospace;
   }
+
   .frame-close {
     background: none;
     border: none;
     color: #1e4d7b;
     cursor: pointer;
     font-family: 'Space Mono', monospace;
-    font-size: 11px;
+    font-size: 13px;
     padding: 0 4px;
     transition: color 0.2s;
+    flex-shrink: 0;
   }
   .frame-close:hover { color: #00c8ff; }
 
-  /* Error */
-  .error-msg {
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #7b1e1e;
-    margin-bottom: 10px;
-    min-height: 14px;
-    transition: color 0.2s;
-  }
-
-  /* Notice */
-  .notice {
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #0d1f3c;
-    margin-top: 14px;
-    line-height: 1.8;
+  #proxy-frame {
+    width: 100%;
+    height: 400px;
+    border: none;
+    display: block;
+    background: #000;
   }
 </style>
 </head>
@@ -242,13 +375,8 @@
   <div class="page-title">EUGENEX</div>
   <div class="page-sub">Private Web Access — Powered by DEFROST</div>
 
-  <div class="status-bar">
-    <div class="status-dot" id="status-dot"></div>
-    <span class="status-text" id="status-text">Proxy offline — enter a URL to connect</span>
-  </div>
-
   <div class="url-row">
-    <input type="text" id="url-input" placeholder="Enter URL or search... (e.g. google.com)" autocomplete="off" spellcheck="false">
+    <input type="text" id="url-input" placeholder="Enter URL or search..." autocomplete="off" spellcheck="false">
     <button class="go-btn" id="go-btn">GO →</button>
   </div>
 
@@ -276,62 +404,28 @@
 
   <div class="frame-wrap" id="frame-wrap">
     <div class="frame-toolbar">
-      <span>EUGENEX</span>
-      <span class="frame-url" id="frame-url-display">—</span>
-      <button class="frame-close" id="frame-close" title="Close">✕</button>
+      <span class="frame-toolbar-label">EUGENEX</span>
+      <span class="frame-url-display" id="frame-url-display">—</span>
+      <button class="frame-close" id="frame-close">✕</button>
     </div>
     <iframe id="proxy-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals" allowfullscreen></iframe>
-  </div>
-
-  <div class="notice">
-    EUGENEX routes requests through the EUGENEX relay. Configure your worker URL below if needed.<br>
-    <span id="worker-url-display" style="color:#1a3a5c;">Worker: not set</span>
-    &nbsp;·&nbsp;
-    <span style="cursor:pointer;color:#1a3a5c;transition:color 0.2s;" id="configure-link" onmouseover="this.style.color='#3a8fcf'" onmouseout="this.style.color='#1a3a5c'">Configure</span>
   </div>
 </div>
 
 <script>
-  // ── CONFIG ──────────────────────────────────────────────────────────────────
-  // After deploying eugenex-worker.js to Cloudflare Workers, paste your worker
-  // URL here (e.g. https://eugenex.YOUR-NAME.workers.dev)
-  const WORKER_URL_KEY = 'eugenex_worker_url';
-  let WORKER_URL = localStorage.getItem(WORKER_URL_KEY) || 'https://eugenex-server.onrender.com';
+  const WORKER_URL = 'https://eugenex-server.onrender.com';
 
-  // ── ELEMENTS ────────────────────────────────────────────────────────────────
-  const urlInput       = document.getElementById('url-input');
-  const goBtn          = document.getElementById('go-btn');
-  const frameWrap      = document.getElementById('frame-wrap');
-  const proxyFrame     = document.getElementById('proxy-frame');
-  const frameUrlDisp   = document.getElementById('frame-url-display');
-  const frameClose     = document.getElementById('frame-close');
-  const statusDot      = document.getElementById('status-dot');
-  const statusText     = document.getElementById('status-text');
-  const errorMsg       = document.getElementById('error-msg');
-  const workerDisp     = document.getElementById('worker-url-display');
-  const configureLink  = document.getElementById('configure-link');
+  const urlInput     = document.getElementById('url-input');
+  const goBtn        = document.getElementById('go-btn');
+  const frameWrap    = document.getElementById('frame-wrap');
+  const proxyFrame   = document.getElementById('proxy-frame');
+  const frameUrlDisp = document.getElementById('frame-url-display');
+  const frameClose   = document.getElementById('frame-close');
+  const errorMsg     = document.getElementById('error-msg');
 
-  function updateWorkerDisplay() {
-    workerDisp.textContent = WORKER_URL
-      ? 'Worker: ' + WORKER_URL.replace('https://', '')
-      : 'Worker: not set';
-  }
-  updateWorkerDisplay();
-
-  configureLink.addEventListener('click', () => {
-    const input = prompt('Paste your Cloudflare Worker URL:\n(e.g. https://eugenex.yourname.workers.dev)', WORKER_URL);
-    if (input !== null) {
-      WORKER_URL = input.trim().replace(/\/$/, '');
-      localStorage.setItem(WORKER_URL_KEY, WORKER_URL);
-      updateWorkerDisplay();
-    }
-  });
-
-  // ── URL NORMALISER ──────────────────────────────────────────────────────────
   function normaliseURL(raw) {
     raw = raw.trim();
     if (!raw) return null;
-    // If it looks like a search query, route to Google
     if (!/^https?:\/\//i.test(raw) && !raw.includes('.')) {
       return 'https://www.google.com/search?q=' + encodeURIComponent(raw);
     }
@@ -339,25 +433,14 @@
     try { new URL(raw); return raw; } catch { return null; }
   }
 
-  // ── PROXY NAVIGATE ──────────────────────────────────────────────────────────
   function navigate(rawURL) {
     errorMsg.textContent = '';
     const target = normaliseURL(rawURL);
     if (!target) { errorMsg.textContent = 'Invalid URL.'; return; }
-
-    if (!WORKER_URL) {
-      errorMsg.textContent = 'No worker URL set. Click "Configure" above.';
-      return;
-    }
-
     const proxied = WORKER_URL + '/proxy?url=' + encodeURIComponent(target);
     frameUrlDisp.textContent = target;
     proxyFrame.src = proxied;
-
     frameWrap.classList.add('visible');
-    statusDot.classList.add('active');
-    statusText.classList.add('active');
-    statusText.textContent = 'Connected — ' + new URL(target).hostname;
   }
 
   goBtn.addEventListener('click', () => navigate(urlInput.value));
@@ -373,9 +456,6 @@
   frameClose.addEventListener('click', () => {
     frameWrap.classList.remove('visible');
     proxyFrame.src = 'about:blank';
-    statusDot.classList.remove('active');
-    statusText.classList.remove('active');
-    statusText.textContent = 'Proxy offline — enter a URL to connect';
     frameUrlDisp.textContent = '—';
   });
 </script>
