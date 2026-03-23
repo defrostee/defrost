@@ -103,12 +103,11 @@
   </div>
 </div>
 
-<script src="/uv/uv.bundle.js"></script>
-<script src="/uv.config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@latest/dist/uv.bundle.js"></script>
+<script src="/page/browse/uv.config.js"></script>
 <script>
-  // Register UV service worker
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/service/' })
+    navigator.serviceWorker.register('/page/browse/uv.sw.js', { scope: '/service/' })
       .catch(err => console.error('SW registration failed:', err));
   }
 
@@ -130,7 +129,6 @@
     errorMsg.textContent = '';
     const url = normalise(raw);
     if (!url) { errorMsg.textContent = 'Invalid URL.'; return; }
-    // UV encodes the URL and opens via the service worker prefix
     const encoded = __uv$config.encodeUrl(url);
     window.location.href = __uv$config.prefix + encoded;
   }
