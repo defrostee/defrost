@@ -1,1 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defrost | Retro Bowl</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: #000; overflow: hidden; font-family: 'Space Mono', monospace; color: #3a8fcf; scrollbar-width: none; }
+  ::-webkit-scrollbar { display: none; }
 
+  .shell { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
+
+  /* ── top bar ── */
+  .topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border-bottom: 1px solid #1a3a5c;
+    background: #000; flex-shrink: 0; z-index: 10;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #3a8fcf; text-decoration: none; transition: color 0.2s; white-space: nowrap;
+  }
+  .back-btn:hover { color: #00c8ff; }
+  .divider { width: 1px; height: 18px; background: #1a3a5c; }
+  .game-title {
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #fff; flex: 1;
+  }
+  .btn-group { display: flex; align-items: center; gap: 6px; }
+  .icon-btn {
+    background: none; border: 1px solid #1a3a5c; color: #3a8fcf;
+    font-family: 'Space Mono', monospace;
+    width: 32px; height: 32px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s; flex-shrink: 0;
+  }
+  .icon-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+  .icon-btn.close-btn:hover { border-color: #ff3b3b; color: #ff3b3b; }
+  .icon-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .report-btn {
+    background: none; border: 1px solid #1a3a5c; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 6px 10px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: border-color 0.2s, color 0.2s; white-space: nowrap;
+  }
+  .report-btn { text-decoration: none; }
+  .report-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+  .report-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── main area ── */
+  .main {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 24px; padding: 32px;
+    position: relative;
+  }
+
+  /* subtle grid bg */
+  .main::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(26,58,92,0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,58,92,0.18) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* ── launch box ── */
+  .launch-box {
+    border: 1px solid #1a3a5c; padding: 44px 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+    text-align: center; max-width: 440px; width: 100%;
+    position: relative; background: #000; z-index: 1;
+  }
+  .launch-box::before {
+    content: ''; position: absolute; inset: -1px;
+    background: linear-gradient(135deg, rgba(0,200,255,0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .status-tag {
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #1e4d7b;
+  }
+  .launch-title {
+    font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #fff; line-height: 1;
+  }
+  .launch-desc {
+    font-size: 10px; letter-spacing: 0.06em; line-height: 1.9; color: #5a9abf;
+    max-width: 300px;
+  }
+  .launch-btn {
+    background: none; border: 1px solid #3a8fcf; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 11px 28px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; gap: 10px; margin-top: 4px;
+  }
+  .launch-btn:hover {
+    border-color: #00c8ff; color: #00c8ff;
+    box-shadow: 0 0 22px rgba(0,200,255,0.15);
+  }
+  .launch-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── status box (while popup open) ── */
+  .status-box {
+    border: 1px solid #1a3a5c; padding: 40px 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    text-align: center; max-width: 440px; width: 100%;
+    position: relative; background: #000; z-index: 1;
+  }
+  .status-title {
+    font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
+  }
+  .status-desc {
+    font-size: 10px; letter-spacing: 0.06em; line-height: 1.9; color: #5a9abf;
+  }
+  .pulse-row { display: flex; align-items: center; gap: 10px; }
+  .pulse {
+    width: 7px; height: 7px; border-radius: 50%; background: #00c8ff; flex-shrink: 0;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .pulse-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #00c8ff; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(0,200,255,0.4); }
+    50% { opacity: 0.5; transform: scale(0.7); box-shadow: 0 0 0 5px rgba(0,200,255,0); }
+  }
+  .reopen-btn {
+    background: none; border: 1px solid #1a3a5c; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 8px 16px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s; display: flex; align-items: center; gap: 8px;
+  }
+  .reopen-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+  .reopen-btn svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* blocked warning */
+  .blocked-msg {
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #ff6b35; display: none; line-height: 1.8; text-align: center;
+  }
+  .blocked-msg.show { display: block; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+
+  <!-- top bar -->
+  <div class="topbar">
+    <a href="https://defrostee.github.io/defrost/page/games/index.html" class="back-btn">
+      <svg viewBox="0 0 16 16" width="11" height="11"><path d="M10 3L5 8l5 5"/></svg>
+      Back
+    </a>
+    <div class="divider"></div>
+    <div class="game-title">Retro Bowl</div>
+    <div class="btn-group">
+      <a href="https://defrostee.github.io/defrost/page/issue/index.html" class="report-btn" title="Report Issue">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/></svg>
+        Report Issue
+      </a>
+    </div>
+  </div>
+
+  <!-- main -->
+  <div class="main">
+
+    <!-- launch screen -->
+    <div class="launch-box" id="launchBox">
+      <div class="status-tag">Game · External window</div>
+      <div class="launch-title">Retro Bowl</div>
+      <div class="launch-desc">
+        Opens in a separate window so all content loads correctly.
+        Allow popups if your browser asks.
+      </div>
+      <button class="launch-btn" onclick="openPopup()">
+        <svg viewBox="0 0 16 16"><path d="M7 3H3v10h10V9"/><polyline points="10,3 13,3 13,6"/><line x1="13" y1="3" x2="7" y2="9"/></svg>
+        Open Game
+      </button>
+      <div class="blocked-msg" id="blockedMsg">
+        Popup was blocked. Click Open Game again,<br>or allow popups for this site in your browser.
+      </div>
+    </div>
+
+    <!-- running screen -->
+    <div class="status-box hidden" id="statusBox">
+      <div class="pulse-row">
+        <div class="pulse"></div>
+        <div class="pulse-label">Game Running</div>
+      </div>
+      <div class="status-title">Retro Bowl</div>
+      <div class="status-desc">
+        The game is open in a separate window.<br>
+        Close that window to return here.
+      </div>
+      <button class="reopen-btn" onclick="focusPopup()">
+        <svg viewBox="0 0 16 16"><path d="M7 3H3v10h10V9"/><polyline points="10,3 13,3 13,6"/><line x1="13" y1="3" x2="7" y2="9"/></svg>
+        Focus Game Window
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const GAME_URL = 'https://lc.snbs.cl/game/rbo/index.html';
+  let gamePopup = null;
+  let pollTimer = null;
+
+  function openPopup() {
+    const w = window.screen.availWidth;
+    const h = window.screen.availHeight;
+    const features = `width=${w},height=${h},left=0,top=0,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no`;
+
+    gamePopup = window.open(GAME_URL, 'defrost_game', features);
+
+    if (!gamePopup || gamePopup.closed || typeof gamePopup.closed === 'undefined') {
+      document.getElementById('blockedMsg').classList.add('show');
+      // fallback: try plain new tab
+      gamePopup = window.open(GAME_URL, '_blank');
+    } else {
+      document.getElementById('blockedMsg').classList.remove('show');
+    }
+
+    if (gamePopup) {
+      showStatus();
+      startPolling();
+    }
+  }
+
+  function showStatus() {
+    document.getElementById('launchBox').classList.add('hidden');
+    document.getElementById('statusBox').classList.remove('hidden');
+  }
+
+  function showLaunch() {
+    document.getElementById('statusBox').classList.add('hidden');
+    document.getElementById('launchBox').classList.remove('hidden');
+    gamePopup = null;
+  }
+
+  function startPolling() {
+    clearInterval(pollTimer);
+    pollTimer = setInterval(() => {
+      if (!gamePopup || gamePopup.closed) {
+        clearInterval(pollTimer);
+        showLaunch();
+      }
+    }, 600);
+  }
+
+  function focusPopup() {
+    if (gamePopup && !gamePopup.closed) {
+      gamePopup.focus();
+    } else {
+      openPopup();
+    }
+  }
+
+  function fullscreenPopup() {
+    if (gamePopup && !gamePopup.closed) {
+      gamePopup.moveTo(0, 0);
+      gamePopup.resizeTo(window.screen.availWidth, window.screen.availHeight);
+      gamePopup.focus();
+    } else {
+      openPopup();
+    }
+  }
+
+  function closeAll() {
+    clearInterval(pollTimer);
+    if (gamePopup && !gamePopup.closed) gamePopup.close();
+    if (window.history.length > 1) window.history.back();
+    else window.close();
+  }
+
+  function reportIssue() {
+    const subject = encodeURIComponent('Issue Report: Neal.fun');
+    const body = encodeURIComponent('Describe the issue:\n\n');
+    window.open('mailto:?subject=' + subject + '&body=' + body);
+  }
+</script>
+</body>
+</html>
