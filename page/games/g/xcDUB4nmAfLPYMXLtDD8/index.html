@@ -10,255 +10,279 @@
   html, body { height: 100%; background: #000; overflow: hidden; font-family: 'Space Mono', monospace; color: #3a8fcf; scrollbar-width: none; }
   ::-webkit-scrollbar { display: none; }
 
-  .shell {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100vw;
-  }
+  .shell { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
 
   /* ── top bar ── */
   .topbar {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    border-bottom: 1px solid #1a3a5c;
-    background: #000;
-    flex-shrink: 0;
-    z-index: 10;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border-bottom: 1px solid #1a3a5c;
+    background: #000; flex-shrink: 0; z-index: 10;
   }
-
   .back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #3a8fcf;
-    text-decoration: none;
-    transition: color 0.2s;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #3a8fcf; text-decoration: none; transition: color 0.2s; white-space: nowrap;
   }
   .back-btn:hover { color: #00c8ff; }
-
-  .divider {
-    width: 1px;
-    height: 18px;
-    background: #1a3a5c;
-  }
-
+  .divider { width: 1px; height: 18px; background: #1a3a5c; }
   .game-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #fff;
-    flex: 1;
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #fff; flex: 1;
   }
-
-  /* icon buttons */
+  .btn-group { display: flex; align-items: center; gap: 6px; }
   .icon-btn {
-    background: none;
-    border: 1px solid #1a3a5c;
-    color: #3a8fcf;
+    background: none; border: 1px solid #1a3a5c; color: #3a8fcf;
     font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
-    flex-shrink: 0;
+    width: 32px; height: 32px; display: flex; align-items: center;
+    justify-content: center; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s; flex-shrink: 0;
   }
   .icon-btn:hover { border-color: #00c8ff; color: #00c8ff; }
   .icon-btn.close-btn:hover { border-color: #ff3b3b; color: #ff3b3b; }
   .icon-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-  /* report / zoom area */
-  .btn-group {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
   .report-btn {
-    background: none;
-    border: 1px solid #1a3a5c;
-    color: #3a8fcf;
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 6px 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: border-color 0.2s, color 0.2s;
-    white-space: nowrap;
+    background: none; border: 1px solid #1a3a5c; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 6px 10px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    transition: border-color 0.2s, color 0.2s; white-space: nowrap;
   }
+  .report-btn { text-decoration: none; }
   .report-btn:hover { border-color: #00c8ff; color: #00c8ff; }
   .report-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* ── iframe wrapper ── */
-  .frame-wrap {
-    flex: 1;
+  /* ── main area ── */
+  .main {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 24px; padding: 32px;
     position: relative;
-    overflow: hidden;
-  }
-  .frame-wrap iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
   }
 
-  /* ── fullscreen override ── */
-  .shell.is-fullscreen {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-  }
-  .shell.is-fullscreen .topbar { display: none; }
-  .shell.is-fullscreen .frame-wrap { flex: 1; }
-
-  /* fullscreen exit overlay hint */
-  .fs-hint {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    background: rgba(0,0,0,0.85);
-    border: 1px solid #1a3a5c;
-    color: #3a8fcf;
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 6px 10px;
-    cursor: pointer;
-    opacity: 0;
+  /* subtle grid bg */
+  .main::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(26,58,92,0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,58,92,0.18) 1px, transparent 1px);
+    background-size: 40px 40px;
     pointer-events: none;
-    transition: opacity 0.3s;
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
-  .fs-hint svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .shell.is-fullscreen .fs-hint {
-    opacity: 1;
-    pointer-events: all;
+
+  /* ── launch box ── */
+  .launch-box {
+    border: 1px solid #1a3a5c; padding: 44px 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+    text-align: center; max-width: 440px; width: 100%;
+    position: relative; background: #000; z-index: 1;
   }
-  .fs-hint:hover { border-color: #00c8ff; color: #00c8ff; }
+  .launch-box::before {
+    content: ''; position: absolute; inset: -1px;
+    background: linear-gradient(135deg, rgba(0,200,255,0.08), transparent 60%);
+    pointer-events: none;
+  }
+  .status-tag {
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #1e4d7b;
+  }
+  .launch-title {
+    font-family: 'Oswald', sans-serif; font-size: 32px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #fff; line-height: 1;
+  }
+  .launch-desc {
+    font-size: 10px; letter-spacing: 0.06em; line-height: 1.9; color: #5a9abf;
+    max-width: 300px;
+  }
+  .launch-btn {
+    background: none; border: 1px solid #3a8fcf; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 11px 28px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; gap: 10px; margin-top: 4px;
+  }
+  .launch-btn:hover {
+    border-color: #00c8ff; color: #00c8ff;
+    box-shadow: 0 0 22px rgba(0,200,255,0.15);
+  }
+  .launch-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── status box (while popup open) ── */
+  .status-box {
+    border: 1px solid #1a3a5c; padding: 40px 48px;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    text-align: center; max-width: 440px; width: 100%;
+    position: relative; background: #000; z-index: 1;
+  }
+  .status-title {
+    font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
+  }
+  .status-desc {
+    font-size: 10px; letter-spacing: 0.06em; line-height: 1.9; color: #5a9abf;
+  }
+  .pulse-row { display: flex; align-items: center; gap: 10px; }
+  .pulse {
+    width: 7px; height: 7px; border-radius: 50%; background: #00c8ff; flex-shrink: 0;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .pulse-label { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #00c8ff; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 0 rgba(0,200,255,0.4); }
+    50% { opacity: 0.5; transform: scale(0.7); box-shadow: 0 0 0 5px rgba(0,200,255,0); }
+  }
+  .reopen-btn {
+    background: none; border: 1px solid #1a3a5c; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 8px 16px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s; display: flex; align-items: center; gap: 8px;
+  }
+  .reopen-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+  .reopen-btn svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* blocked warning */
+  .blocked-msg {
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #ff6b35; display: none; line-height: 1.8; text-align: center;
+  }
+  .blocked-msg.show { display: block; }
+
+  .hidden { display: none !important; }
 </style>
 </head>
 <body>
-
 <div class="shell" id="shell">
 
   <!-- top bar -->
   <div class="topbar">
-    <a href="../../index.html" class="back-btn">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M10 3L5 8l5 5"/></svg>
+    <a href="https://defrostee.github.io/defrost/page/games/index.html" class="back-btn">
+      <svg viewBox="0 0 16 16" width="11" height="11"><path d="M10 3L5 8l5 5"/></svg>
       Back
     </a>
-
     <div class="divider"></div>
     <div class="game-title">Neal.fun</div>
-
     <div class="btn-group">
-      <!-- Report Issue -->
-      <button class="report-btn" onclick="reportIssue()" title="Report Issue">
+      <a href="https://defrostee.github.io/defrost/page/issue/index.html" class="report-btn" title="Report Issue">
         <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/></svg>
         Report Issue
-      </button>
-
-      <!-- Zoom out -->
-      <button class="icon-btn" id="zoomOutBtn" onclick="zoomOut()" title="Zoom Out">
-        <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="4.5" y1="7" x2="9.5" y2="7"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
-      </button>
-
-      <!-- Zoom in -->
-      <button class="icon-btn" id="zoomInBtn" onclick="zoomIn()" title="Zoom In">
-        <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="7" y1="4.5" x2="7" y2="9.5"/><line x1="4.5" y1="7" x2="9.5" y2="7"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
-      </button>
-
-      <!-- Fullscreen -->
-      <button class="icon-btn" id="fsBtn" onclick="toggleFullscreen()" title="Fullscreen">
-        <svg viewBox="0 0 16 16" id="fsIcon">
-          <polyline points="3,6 3,3 6,3"/><polyline points="10,3 13,3 13,6"/>
-          <polyline points="13,10 13,13 10,13"/><polyline points="6,13 3,13 3,10"/>
-        </svg>
-      </button>
-
-      <!-- Close -->
-      <button class="icon-btn close-btn" onclick="closePage()" title="Close">
-        <svg viewBox="0 0 16 16"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
-      </button>
+      </a>
     </div>
   </div>
 
-  <!-- iframe -->
-  <div class="frame-wrap">
-    <iframe
-      id="gameFrame"
-      src="https://lc.snbs.cl/portal/k12/062d013e1d764557003c1422402a1f1641"
-      allow="fullscreen; autoplay"
-      allowfullscreen
-      title="Neal.fun"
-    ></iframe>
-  </div>
+  <!-- main -->
+  <div class="main">
 
-  <!-- fullscreen exit hint -->
-  <div class="fs-hint" onclick="exitFullscreen()">
-    <svg viewBox="0 0 16 16"><polyline points="6,3 3,3 3,6"/><polyline points="10,3 13,3 13,6"/><polyline points="13,10 13,13 10,13"/><polyline points="6,13 3,13 3,10"/></svg>
-    Exit Fullscreen
-  </div>
+    <!-- launch screen -->
+    <div class="launch-box" id="launchBox">
+      <div class="status-tag">Game · External window</div>
+      <div class="launch-title">Neal.fun</div>
+      <div class="launch-desc">
+        Opens in a separate window so all content loads correctly.
+        Allow popups if your browser asks.
+      </div>
+      <button class="launch-btn" onclick="openPopup()">
+        <svg viewBox="0 0 16 16"><path d="M7 3H3v10h10V9"/><polyline points="10,3 13,3 13,6"/><line x1="13" y1="3" x2="7" y2="9"/></svg>
+        Open Game
+      </button>
+      <div class="blocked-msg" id="blockedMsg">
+        Popup was blocked. Click Open Game again,<br>or allow popups for this site in your browser.
+      </div>
+    </div>
 
+    <!-- running screen -->
+    <div class="status-box hidden" id="statusBox">
+      <div class="pulse-row">
+        <div class="pulse"></div>
+        <div class="pulse-label">Game Running</div>
+      </div>
+      <div class="status-title">Neal.fun</div>
+      <div class="status-desc">
+        The game is open in a separate window.<br>
+        Close that window to return here.
+      </div>
+      <button class="reopen-btn" onclick="focusPopup()">
+        <svg viewBox="0 0 16 16"><path d="M7 3H3v10h10V9"/><polyline points="10,3 13,3 13,6"/><line x1="13" y1="3" x2="7" y2="9"/></svg>
+        Focus Game Window
+      </button>
+    </div>
+
+  </div>
 </div>
 
 <script>
-  const shell = document.getElementById('shell');
-  const frame = document.getElementById('gameFrame');
-  let zoomLevel = 1;
-  const ZOOM_STEP = 0.15;
-  const ZOOM_MIN  = 0.5;
-  const ZOOM_MAX  = 2.0;
+  const GAME_URL = 'https://lc.snbs.cl/portal/k12/062d013e1d764557003c1422402a1f1641';
+  let gamePopup = null;
+  let pollTimer = null;
 
-  /* ── Fullscreen (pure CSS class, no native API) ── */
-  function toggleFullscreen() {
-    shell.classList.toggle('is-fullscreen');
-  }
-  function exitFullscreen() {
-    shell.classList.remove('is-fullscreen');
-  }
+  function openPopup() {
+    const w = window.screen.availWidth;
+    const h = window.screen.availHeight;
+    const features = `width=${w},height=${h},left=0,top=0,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no`;
 
-  /* ── Zoom ── */
-  function applyZoom() {
-    frame.style.transform = `scale(${zoomLevel})`;
-    frame.style.transformOrigin = 'top left';
-    frame.style.width  = (100 / zoomLevel) + '%';
-    frame.style.height = (100 / zoomLevel) + '%';
-  }
-  function zoomIn()  { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); applyZoom(); }
-  function zoomOut() { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); applyZoom(); }
+    gamePopup = window.open(GAME_URL, 'defrost_game', features);
 
-  /* ── Report Issue ── */
-  function reportIssue() {
-    const subject = encodeURIComponent('Issue Report: Neal.fun Embed');
-    const body    = encodeURIComponent('Describe the issue you encountered:\n\n');
-    window.open('mailto:?subject=' + subject + '&body=' + body);
+    if (!gamePopup || gamePopup.closed || typeof gamePopup.closed === 'undefined') {
+      document.getElementById('blockedMsg').classList.add('show');
+      // fallback: try plain new tab
+      gamePopup = window.open(GAME_URL, '_blank');
+    } else {
+      document.getElementById('blockedMsg').classList.remove('show');
+    }
+
+    if (gamePopup) {
+      showStatus();
+      startPolling();
+    }
   }
 
-  /* ── Close ── */
-  function closePage() {
+  function showStatus() {
+    document.getElementById('launchBox').classList.add('hidden');
+    document.getElementById('statusBox').classList.remove('hidden');
+  }
+
+  function showLaunch() {
+    document.getElementById('statusBox').classList.add('hidden');
+    document.getElementById('launchBox').classList.remove('hidden');
+    gamePopup = null;
+  }
+
+  function startPolling() {
+    clearInterval(pollTimer);
+    pollTimer = setInterval(() => {
+      if (!gamePopup || gamePopup.closed) {
+        clearInterval(pollTimer);
+        showLaunch();
+      }
+    }, 600);
+  }
+
+  function focusPopup() {
+    if (gamePopup && !gamePopup.closed) {
+      gamePopup.focus();
+    } else {
+      openPopup();
+    }
+  }
+
+  function fullscreenPopup() {
+    if (gamePopup && !gamePopup.closed) {
+      gamePopup.moveTo(0, 0);
+      gamePopup.resizeTo(window.screen.availWidth, window.screen.availHeight);
+      gamePopup.focus();
+    } else {
+      openPopup();
+    }
+  }
+
+  function closeAll() {
+    clearInterval(pollTimer);
+    if (gamePopup && !gamePopup.closed) gamePopup.close();
     if (window.history.length > 1) window.history.back();
     else window.close();
+  }
+
+  function reportIssue() {
+    const subject = encodeURIComponent('Issue Report: Neal.fun');
+    const body = encodeURIComponent('Describe the issue:\n\n');
+    window.open('mailto:?subject=' + subject + '&body=' + body);
   }
 </script>
 </body>
