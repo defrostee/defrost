@@ -59,26 +59,25 @@
   </div>
 </div>
 <script>
-  // img: swap "image.png" to the actual filename per game when ready
   const ALL_GAMES = [
-    { title: "Retro Bowl",    url: "defrostee.github.io/page/games/g/retro-bowl", img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Neal.fun",  url: ".../issue/index.html",   img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 3",  url: "defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 4",  url: "defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 5",  url: "defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 6",  url: "defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 7",  url: "defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 8",  url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 9",  url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 10", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 11", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 12", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 13", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 14", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 15", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 16", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 17", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
-    { title: "Game Title 18", url: "page/games/g/example",                       img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Retro Bowl",    url: "https://defrostee.github.io/page/games/g/retro-bowl", img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Neal.fun",      url: "https://defrostee.github.io/defrost/page/issue/index.html", img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 3",  url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 4",  url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 5",  url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 6",  url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 7",  url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 8",  url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 9",  url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 10", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 11", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 12", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 13", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 14", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 15", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 16", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 17", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
+    { title: "Game Title 18", url: "https://defrostee.github.io/page/games/g/example",   img: "https://defrostee.github.io/page/games/i/image.png" },
   ];
 
   const PER_PAGE = 9;
