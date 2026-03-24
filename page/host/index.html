@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defrost | How to Deploy</title>
+<link rel="icon" type="image/png" href="../../images/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; scrollbar-width: none; }
+  ::-webkit-scrollbar { display: none; }
+  body { background: #000; min-height: 100vh; font-family: 'Space Mono', monospace; color: #3a8fcf; display: flex; align-items: center; justify-content: center; padding: 24px 0; }
+  .container { width: min(720px, 92vw); display: flex; flex-direction: column; }
+  .back { display: inline-block; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #3a8fcf; text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
+  .back:hover { color: #00c8ff; }
+  .page-title { font-family: 'Oswald', sans-serif; font-size: clamp(28px, 5vw, 52px); font-weight: 700; letter-spacing: 0.1em; color: #fff; text-transform: uppercase; line-height: 1; margin-bottom: 6px; }
+  .page-sub { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #1e4d7b; margin-bottom: 24px; }
+
+  .nav { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+  .nav-btn { background: none; border: 1px solid #1a3a5c; color: #3a8fcf; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
+  .nav-btn:hover { border-color: #3a8fcf; color: #a8d8f0; }
+  .nav-btn.active { border-color: #00c8ff; color: #00c8ff; background: rgba(0,200,255,0.05); }
+
+  .panel { display: none; flex-direction: column; }
+  .panel.active { display: flex; }
+
+  .platform-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #1a3a5c; }
+  .platform-icon { width: 36px; height: 36px; border: 1px solid #1a3a5c; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .platform-name { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.08em; text-transform: uppercase; }
+  .platform-desc { font-size: 10px; letter-spacing: 0.1em; color: #1e4d7b; text-transform: uppercase; margin-top: 2px; }
+
+  .steps {}
+  .step { display: none; flex-direction: column; gap: 12px; animation: fadeUp 0.22s ease forwards; }
+  .step.active { display: flex; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-number { font-size: 10px; letter-spacing: 0.2em; color: #1e4d7b; text-transform: uppercase; }
+  .step-number span { color: #3a8fcf; }
+  .step-title { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.08em; }
+  .step-body { font-size: 11px; line-height: 1.9; color: #a8d8f0; letter-spacing: 0.04em; }
+  .step-body a { color: #00c8ff; text-decoration: none; border-bottom: 1px solid #1a3a5c; transition: border-color 0.2s; }
+  .step-body a:hover { border-color: #00c8ff; }
+  .step-body strong { color: #fff; }
+
+  .tip { background: rgba(58,143,207,0.05); border: 1px solid #1a3a5c; border-left: 2px solid #3a8fcf; padding: 10px 14px; font-size: 10px; letter-spacing: 0.08em; line-height: 1.8; color: #3a8fcf; text-transform: uppercase; }
+  .tip strong { color: #00c8ff; }
+  .warn { background: rgba(255,180,0,0.03); border: 1px solid #2a2000; border-left: 2px solid #7a5a00; padding: 10px 14px; font-size: 10px; letter-spacing: 0.08em; line-height: 1.8; color: #7a6030; text-transform: uppercase; }
+  .warn strong { color: #c8a030; }
+
+  code { background: #0a0a0a; border: 1px solid #1a3a5c; color: #00c8ff; font-family: 'Space Mono', monospace; font-size: 10px; padding: 2px 7px; letter-spacing: 0.05em; }
+
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #1e4d7b; margin-bottom: 6px; }
+  .progress-label span { color: #3a8fcf; }
+  .progress-bar-bg { height: 2px; background: #0d1f3c; width: 100%; }
+  .progress-bar { height: 2px; background: #3a8fcf; transition: width 0.3s ease; }
+
+  .btn-row { display: flex; gap: 10px; align-items: center; margin-top: 6px; }
+  .btn { background: none; border: 1px solid #1a3a5c; color: #3a8fcf; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; padding: 9px 18px; cursor: pointer; transition: all 0.2s; }
+  .btn:hover:not(:disabled) { border-color: #00c8ff; color: #00c8ff; }
+  .btn:disabled { color: #1a3a5c; border-color: #0d1f3c; cursor: default; }
+  .btn.primary { border-color: #3a8fcf; color: #fff; background: rgba(58,143,207,0.1); }
+  .btn.primary:hover { border-color: #00c8ff; background: rgba(0,200,255,0.1); color: #00c8ff; }
+
+  .done-msg { display: none; flex-direction: column; gap: 10px; animation: fadeUp 0.22s ease forwards; }
+  .done-msg.active { display: flex; }
+  .done-title { font-family: 'Oswald', sans-serif; font-size: 28px; font-weight: 700; color: #00c8ff; text-transform: uppercase; letter-spacing: 0.1em; }
+  .done-sub { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #3a8fcf; }
+  .restart-btn { margin-top: 4px; align-self: flex-start; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="../../index.html" class="back">← Back</a>
+  <div class="page-title">Deploy</div>
+  <div class="page-sub">Choose a platform // Follow the steps</div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchPlatform('github', this)">⬡ GitHub Pages</button>
+    <button class="nav-btn" onclick="switchPlatform('netlify', this)">◈ Netlify</button>
+    <button class="nav-btn" onclick="switchPlatform('infinity', this)">∞ InfinityFree</button>
+  </div>
+
+  <!-- GITHUB PAGES -->
+  <div class="panel active" id="panel-github">
+    <div class="platform-header">
+      <div class="platform-icon">⬡</div>
+      <div>
+        <div class="platform-name">GitHub Pages</div>
+        <div class="platform-desc">Free // No install required // Instant</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">Progress <span id="gh-prog-label">Step 1 of 6</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar" id="gh-bar" style="width:16.6%"></div></div>
+    </div>
+    <div class="steps" id="gh-steps">
+      <div class="step active" data-step="1">
+        <div class="step-number">Step <span>01</span> of 06</div>
+        <div class="step-title">Fork the repository</div>
+        <div class="step-body">Go to the <a href="https://github.com/defrostee/defrost" target="_blank">Defrost GitHub repo</a>. In the top-right corner of the page, click the <strong>Fork</strong> button. This copies the project into your own GitHub account. If you don't have an account, <a href="https://github.com/signup" target="_blank">sign up here first</a> — it's free!</div>
+        <div class="btn-row">
+          <button class="btn" disabled>← Back</button>
+          <button class="btn primary" onclick="ghNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-number">Step <span>02</span> of 06</div>
+        <div class="step-title">Star the repository</div>
+        <div class="step-body">While you're there, click the <strong>Star</strong> ⭐ button at the top of the page too. It helps the project grow and means a lot! You can find the star button right next to the Fork button.</div>
+        <div class="tip"><strong>Tip:</strong> Starring is optional but super appreciated!</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ghPrev()">← Back</button>
+          <button class="btn primary" onclick="ghNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-number">Step <span>03</span> of 06</div>
+        <div class="step-title">Open your fork's Settings</div>
+        <div class="step-body">Go to your forked repo (it'll be at <code>github.com/YOUR-USERNAME/defrost</code>). Click the <strong>Settings</strong> tab near the top of the page.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ghPrev()">← Back</button>
+          <button class="btn primary" onclick="ghNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="step-number">Step <span>04</span> of 06</div>
+        <div class="step-title">Go to Pages</div>
+        <div class="step-body">In the left sidebar inside Settings, scroll down and click <strong>Pages</strong>. This is where you turn on your free website.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ghPrev()">← Back</button>
+          <button class="btn primary" onclick="ghNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="step-number">Step <span>05</span> of 06</div>
+        <div class="step-title">Enable GitHub Pages</div>
+        <div class="step-body">Under <strong>Branch</strong>, click the dropdown that says <strong>None</strong> and select <code>main</code>. Leave the folder as <code>/ (root)</code>. Click <strong>Save</strong>.</div>
+        <div class="tip"><strong>Tip:</strong> It takes about 1–2 minutes to go live after you save!</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ghPrev()">← Back</button>
+          <button class="btn primary" onclick="ghNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="6">
+        <div class="step-number">Step <span>06</span> of 06</div>
+        <div class="step-title">Visit your site!</div>
+        <div class="step-body">Refresh the Pages settings after a minute or two. GitHub will show you a link at the top that says <strong>"Your site is live at..."</strong> — click it and you're done! Your URL will look like <code>YOUR-USERNAME.github.io/defrost</code>.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ghPrev()">← Back</button>
+          <button class="btn primary" onclick="ghDone()">I'm Done! 🎉</button>
+        </div>
+      </div>
+    </div>
+    <div class="done-msg" id="gh-done">
+      <div class="done-title">You're live! 🎉</div>
+      <div class="done-sub">Your site is now on the internet via GitHub Pages.</div>
+      <button class="btn restart-btn" onclick="ghRestart()">↺ Start Over</button>
+    </div>
+  </div>
+
+  <!-- NETLIFY -->
+  <div class="panel" id="panel-netlify">
+    <div class="platform-header">
+      <div class="platform-icon">◈</div>
+      <div>
+        <div class="platform-name">Netlify</div>
+        <div class="platform-desc">Free // Custom name // Live in seconds</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">Progress <span id="nl-prog-label">Step 1 of 6</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar" id="nl-bar" style="width:16.6%"></div></div>
+    </div>
+    <div class="steps" id="nl-steps">
+      <div class="step active" data-step="1">
+        <div class="step-number">Step <span>01</span> of 06</div>
+        <div class="step-title">Fork the repository</div>
+        <div class="step-body">Go to the <a href="https://github.com/defrostee/defrost" target="_blank">Defrost GitHub repo</a> and click <strong>Fork</strong> in the top-right. This copies it to your GitHub account. No account? <a href="https://github.com/signup" target="_blank">Sign up free here</a>.</div>
+        <div class="btn-row">
+          <button class="btn" disabled>← Back</button>
+          <button class="btn primary" onclick="nlNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-number">Step <span>02</span> of 06</div>
+        <div class="step-title">Sign up for Netlify</div>
+        <div class="step-body">Go to <a href="https://netlify.com" target="_blank">netlify.com</a> and click <strong>Sign up</strong>. Choose <strong>Sign up with GitHub</strong> — this makes connecting your repo way easier. Authorize Netlify when it asks.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="nlPrev()">← Back</button>
+          <button class="btn primary" onclick="nlNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-number">Step <span>03</span> of 06</div>
+        <div class="step-title">Add a new site</div>
+        <div class="step-body">Once logged in, click <strong>Add new site</strong> → <strong>Import an existing project</strong>. Choose <strong>GitHub</strong> as your provider, then find and click your forked <code>defrost</code> repo from the list.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="nlPrev()">← Back</button>
+          <button class="btn primary" onclick="nlNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="step-number">Step <span>04</span> of 06</div>
+        <div class="step-title">Deploy the site</div>
+        <div class="step-body">Netlify will show you some settings — you don't need to change anything here. Just scroll down and click <strong>Deploy site</strong>. It'll start building. Wait about 5–10 seconds.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="nlPrev()">← Back</button>
+          <button class="btn primary" onclick="nlNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="step-number">Step <span>05</span> of 06</div>
+        <div class="step-title">Rename your site</div>
+        <div class="step-body">After deploying, go to <strong>Site configuration</strong> in the left menu. Scroll down just a tiny bit until you see <strong>Site details</strong>. Click <strong>Change site name</strong>, type whatever name you want, and save. Your URL will become <code>your-name.netlify.app</code>.</div>
+        <div class="tip"><strong>Tip:</strong> Names must be unique — if yours is taken, try adding numbers or dashes.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="nlPrev()">← Back</button>
+          <button class="btn primary" onclick="nlNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="6">
+        <div class="step-number">Step <span>06</span> of 06</div>
+        <div class="step-title">Visit your site!</div>
+        <div class="step-body">Wait about 5 seconds, then click your Netlify URL at the top of the dashboard — it'll look like <code>your-name.netlify.app</code>. Your site is live!</div>
+        <div class="btn-row">
+          <button class="btn" onclick="nlPrev()">← Back</button>
+          <button class="btn primary" onclick="nlDone()">I'm Done! 🎉</button>
+        </div>
+      </div>
+    </div>
+    <div class="done-msg" id="nl-done">
+      <div class="done-title">You're live! 🎉</div>
+      <div class="done-sub">Your site is now on the internet via Netlify.</div>
+      <button class="btn restart-btn" onclick="nlRestart()">↺ Start Over</button>
+    </div>
+  </div>
+
+  <!-- INFINITYFREE -->
+  <div class="panel" id="panel-infinity">
+    <div class="platform-header">
+      <div class="platform-icon">∞</div>
+      <div>
+        <div class="platform-name">InfinityFree</div>
+        <div class="platform-desc">Free // Custom domain // ZIP upload</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">Progress <span id="if-prog-label">Step 1 of 9</span></div>
+      <div class="progress-bar-bg"><div class="progress-bar" id="if-bar" style="width:11.1%"></div></div>
+    </div>
+    <div class="steps" id="if-steps">
+      <div class="step active" data-step="1">
+        <div class="step-number">Step <span>01</span> of 09</div>
+        <div class="step-title">Download the files as a ZIP</div>
+        <div class="step-body">Go to the <a href="https://github.com/defrostee/defrost" target="_blank">Defrost GitHub repo</a>. Click the green <strong>Code</strong> button, then click <strong>Download ZIP</strong>. Save it somewhere easy to find like your Desktop.</div>
+        <div class="btn-row">
+          <button class="btn" disabled>← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-number">Step <span>02</span> of 09</div>
+        <div class="step-title">Create an InfinityFree account</div>
+        <div class="step-body">Go to <a href="https://infinityfree.com" target="_blank">infinityfree.com</a> and click <strong>Register</strong>. Enter your email and a password, then verify your email when they send you a confirmation.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-number">Step <span>03</span> of 09</div>
+        <div class="step-title">Create a hosting account & domain</div>
+        <div class="step-body">After logging in, click <strong>New Account</strong>. You'll be asked to choose a subdomain — type whatever you want (like <code>mysite</code>) and InfinityFree will give you a free URL like <code>mysite.infinityfreeapp.com</code>. Click <strong>Create Account</strong> and wait a minute.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="step-number">Step <span>04</span> of 09</div>
+        <div class="step-title">Open the File Manager</div>
+        <div class="step-body">From your account dashboard, click <strong>Control Panel</strong> on your hosting account. Inside the control panel, find and click <strong>File Manager</strong>. If there's no folder listed yet, click <strong>Create Directory</strong> first, then open File Manager.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="step-number">Step <span>05</span> of 09</div>
+        <div class="step-title">Navigate to htdocs</div>
+        <div class="step-body">Inside the File Manager, open the folder called <code>htdocs</code>. This is the folder that holds your website files. Everything you upload here will show up on your site.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="6">
+        <div class="step-number">Step <span>06</span> of 09</div>
+        <div class="step-title">Upload your ZIP</div>
+        <div class="step-body">Click <strong>Upload</strong> at the top of the file manager. Then click the <strong>Zip &amp; Extract</strong> tab. Click <strong>Upload</strong> again and select the ZIP file you downloaded in Step 1. Wait for it to finish uploading.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="7">
+        <div class="step-number">Step <span>07</span> of 09</div>
+        <div class="step-title">Extract & Refresh</div>
+        <div class="step-body">After uploading, find your ZIP file in the list. Under the <strong>Actions</strong> column next to it, click <strong>Extract</strong>. Once it finishes, click <strong>Refresh</strong> (also under Actions or the refresh button at the top) to see your extracted files appear.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="8">
+        <div class="step-number">Step <span>08</span> of 09</div>
+        <div class="step-title">Check for the green checkmark</div>
+        <div class="step-body">Go back to your InfinityFree dashboard tab and <strong>refresh the page</strong>. Look at your hosting account — check that <strong>Index File</strong> shows a <strong>green checkmark ✓</strong>. If it's not green yet, wait 2 minutes and refresh again.</div>
+        <div class="warn"><strong>No green check?</strong> Make sure your main file inside htdocs is named exactly <code>index.html</code> — lowercase, no spaces.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifNext()">Next Step →</button>
+        </div>
+      </div>
+      <div class="step" data-step="9">
+        <div class="step-number">Step <span>09</span> of 09</div>
+        <div class="step-title">Open your link!</div>
+        <div class="step-body">Once you see the green checkmark, click your domain URL from the dashboard. Your site is live! If it doesn't load, wait 2 more minutes and try again — it just needs a moment to fully activate.</div>
+        <div class="tip"><strong>To update:</strong> Go back to File Manager, delete the old files, and upload a new ZIP.</div>
+        <div class="btn-row">
+          <button class="btn" onclick="ifPrev()">← Back</button>
+          <button class="btn primary" onclick="ifDone()">I'm Done! 🎉</button>
+        </div>
+      </div>
+    </div>
+    <div class="done-msg" id="if-done">
+      <div class="done-title">You're live! 🎉</div>
+      <div class="done-sub">Your site is now on the internet via InfinityFree.</div>
+      <button class="btn restart-btn" onclick="ifRestart()">↺ Start Over</button>
+    </div>
+  </div>
+
+</div>
+<script>
+  function switchPlatform(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // GITHUB
+  let ghStep = 1; const ghTotal = 6;
+  function ghShow(n) {
+    ghStep = n;
+    document.querySelectorAll('#gh-steps .step').forEach(s => s.classList.remove('active'));
+    document.querySelector('#gh-steps .step[data-step="' + n + '"]').classList.add('active');
+    document.getElementById('gh-prog-label').textContent = 'Step ' + n + ' of ' + ghTotal;
+    document.getElementById('gh-bar').style.width = (n / ghTotal * 100) + '%';
+    document.getElementById('gh-done').classList.remove('active');
+    document.getElementById('gh-steps').style.display = '';
+  }
+  function ghNext() { if (ghStep < ghTotal) ghShow(ghStep + 1); }
+  function ghPrev() { if (ghStep > 1) ghShow(ghStep - 1); }
+  function ghDone() {
+    document.getElementById('gh-steps').style.display = 'none';
+    document.getElementById('gh-done').classList.add('active');
+    document.getElementById('gh-bar').style.width = '100%';
+    document.getElementById('gh-prog-label').textContent = 'Complete!';
+  }
+  function ghRestart() { ghShow(1); }
+
+  // NETLIFY
+  let nlStep = 1; const nlTotal = 6;
+  function nlShow(n) {
+    nlStep = n;
+    document.querySelectorAll('#nl-steps .step').forEach(s => s.classList.remove('active'));
+    document.querySelector('#nl-steps .step[data-step="' + n + '"]').classList.add('active');
+    document.getElementById('nl-prog-label').textContent = 'Step ' + n + ' of ' + nlTotal;
+    document.getElementById('nl-bar').style.width = (n / nlTotal * 100) + '%';
+    document.getElementById('nl-done').classList.remove('active');
+    document.getElementById('nl-steps').style.display = '';
+  }
+  function nlNext() { if (nlStep < nlTotal) nlShow(nlStep + 1); }
+  function nlPrev() { if (nlStep > 1) nlShow(nlStep - 1); }
+  function nlDone() {
+    document.getElementById('nl-steps').style.display = 'none';
+    document.getElementById('nl-done').classList.add('active');
+    document.getElementById('nl-bar').style.width = '100%';
+    document.getElementById('nl-prog-label').textContent = 'Complete!';
+  }
+  function nlRestart() { nlShow(1); }
+
+  // INFINITYFREE
+  let ifStep = 1; const ifTotal = 9;
+  function ifShow(n) {
+    ifStep = n;
+    document.querySelectorAll('#if-steps .step').forEach(s => s.classList.remove('active'));
+    document.querySelector('#if-steps .step[data-step="' + n + '"]').classList.add('active');
+    document.getElementById('if-prog-label').textContent = 'Step ' + n + ' of ' + ifTotal;
+    document.getElementById('if-bar').style.width = (n / ifTotal * 100) + '%';
+    document.getElementById('if-done').classList.remove('active');
+    document.getElementById('if-steps').style.display = '';
+  }
+  function ifNext() { if (ifStep < ifTotal) ifShow(ifStep + 1); }
+  function ifPrev() { if (ifStep > 1) ifShow(ifStep - 1); }
+  function ifDone() {
+    document.getElementById('if-steps').style.display = 'none';
+    document.getElementById('if-done').classList.add('active');
+    document.getElementById('if-bar').style.width = '100%';
+    document.getElementById('if-prog-label').textContent = 'Complete!';
+  }
+  function ifRestart() { ifShow(1); }
+</script>
+</body>
+</html>
