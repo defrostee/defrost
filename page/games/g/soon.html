@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defrost | Coming Soon</title>
+<link rel="icon" type="image/png" href="../../images/icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow: hidden; height: 100%; scrollbar-width: none; }
+  ::-webkit-scrollbar { display: none; }
+  body { background: #000; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; color: #3a8fcf; }
+  .container { width: min(900px, 92vw); display: flex; flex-direction: column; gap: 0; }
+  .back { display: inline-block; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #3a8fcf; text-decoration: none; margin-bottom: 40px; transition: color 0.2s; }
+  .back:hover { color: #00c8ff; }
+  .label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #1e4d7b; margin-bottom: 16px; }
+  .page-title { font-family: 'Oswald', sans-serif; font-size: clamp(36px, 7vw, 72px); font-weight: 700; letter-spacing: 0.1em; color: #fff; text-transform: uppercase; line-height: 1; margin-bottom: 20px; }
+  .page-title span { color: #3a8fcf; }
+  .sub { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: #3a8fcf; margin-bottom: 48px; }
+  .divider { width: 48px; height: 1px; background: #1a3a5c; margin-bottom: 48px; }
+  .blink { animation: blink 1.1s step-start infinite; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="https://defrostee.github.io/defrost/page/" class="back">← Back</a>
+  <div class="label">Status // Pending</div>
+  <div class="page-title">Coming<br><span>Soon</span><span class="blink">_</span></div>
+  <div class="divider"></div>
+  <div class="sub">This page is coming soon &mdash; stay tuned.</div>
+</div>
+</body>
+</html>
