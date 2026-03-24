@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defrost | Neal.fun</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: #000; overflow: hidden; font-family: 'Space Mono', monospace; color: #3a8fcf; scrollbar-width: none; }
+  ::-webkit-scrollbar { display: none; }
+
+  .shell {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ── top bar ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid #1a3a5c;
+    background: #000;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #3a8fcf;
+    text-decoration: none;
+    transition: color 0.2s;
+    white-space: nowrap;
+  }
+  .back-btn:hover { color: #00c8ff; }
+
+  .divider {
+    width: 1px;
+    height: 18px;
+    background: #1a3a5c;
+  }
+
+  .game-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    flex: 1;
+  }
+
+  /* icon buttons */
+  .icon-btn {
+    background: none;
+    border: 1px solid #1a3a5c;
+    color: #3a8fcf;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    flex-shrink: 0;
+  }
+  .icon-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+  .icon-btn.close-btn:hover { border-color: #ff3b3b; color: #ff3b3b; }
+  .icon-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* report / zoom area */
+  .btn-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .report-btn {
+    background: none;
+    border: 1px solid #1a3a5c;
+    color: #3a8fcf;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .report-btn:hover { border-color: #00c8ff; color: #00c8ff; }
+  .report-btn svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── iframe wrapper ── */
+  .frame-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  .frame-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* ── fullscreen override ── */
+  .shell.is-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+  }
+  .shell.is-fullscreen .topbar { display: none; }
+  .shell.is-fullscreen .frame-wrap { flex: 1; }
+
+  /* fullscreen exit overlay hint */
+  .fs-hint {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.85);
+    border: 1px solid #1a3a5c;
+    color: #3a8fcf;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .fs-hint svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .shell.is-fullscreen .fs-hint {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .fs-hint:hover { border-color: #00c8ff; color: #00c8ff; }
+</style>
+</head>
+<body>
+
+<div class="shell" id="shell">
+
+  <!-- top bar -->
+  <div class="topbar">
+    <a href="../../index.html" class="back-btn">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M10 3L5 8l5 5"/></svg>
+      Back
+    </a>
+
+    <div class="divider"></div>
+    <div class="game-title">Neal.fun</div>
+
+    <div class="btn-group">
+      <!-- Report Issue -->
+      <button class="report-btn" onclick="reportIssue()" title="Report Issue">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/></svg>
+        Report Issue
+      </button>
+
+      <!-- Zoom out -->
+      <button class="icon-btn" id="zoomOutBtn" onclick="zoomOut()" title="Zoom Out">
+        <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="4.5" y1="7" x2="9.5" y2="7"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
+      </button>
+
+      <!-- Zoom in -->
+      <button class="icon-btn" id="zoomInBtn" onclick="zoomIn()" title="Zoom In">
+        <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><line x1="7" y1="4.5" x2="7" y2="9.5"/><line x1="4.5" y1="7" x2="9.5" y2="7"/><line x1="10.5" y1="10.5" x2="14" y2="14"/></svg>
+      </button>
+
+      <!-- Fullscreen -->
+      <button class="icon-btn" id="fsBtn" onclick="toggleFullscreen()" title="Fullscreen">
+        <svg viewBox="0 0 16 16" id="fsIcon">
+          <polyline points="3,6 3,3 6,3"/><polyline points="10,3 13,3 13,6"/>
+          <polyline points="13,10 13,13 10,13"/><polyline points="6,13 3,13 3,10"/>
+        </svg>
+      </button>
+
+      <!-- Close -->
+      <button class="icon-btn close-btn" onclick="closePage()" title="Close">
+        <svg viewBox="0 0 16 16"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- iframe -->
+  <div class="frame-wrap">
+    <iframe
+      id="gameFrame"
+      src="https://lc.snbs.cl/portal/k12/062d013e1d764557003c1422402a1f1641"
+      allow="fullscreen; autoplay"
+      allowfullscreen
+      title="Neal.fun"
+    ></iframe>
+  </div>
+
+  <!-- fullscreen exit hint -->
+  <div class="fs-hint" onclick="exitFullscreen()">
+    <svg viewBox="0 0 16 16"><polyline points="6,3 3,3 3,6"/><polyline points="10,3 13,3 13,6"/><polyline points="13,10 13,13 10,13"/><polyline points="6,13 3,13 3,10"/></svg>
+    Exit Fullscreen
+  </div>
+
+</div>
+
+<script>
+  const shell = document.getElementById('shell');
+  const frame = document.getElementById('gameFrame');
+  let zoomLevel = 1;
+  const ZOOM_STEP = 0.15;
+  const ZOOM_MIN  = 0.5;
+  const ZOOM_MAX  = 2.0;
+
+  /* ── Fullscreen (pure CSS class, no native API) ── */
+  function toggleFullscreen() {
+    shell.classList.toggle('is-fullscreen');
+  }
+  function exitFullscreen() {
+    shell.classList.remove('is-fullscreen');
+  }
+
+  /* ── Zoom ── */
+  function applyZoom() {
+    frame.style.transform = `scale(${zoomLevel})`;
+    frame.style.transformOrigin = 'top left';
+    frame.style.width  = (100 / zoomLevel) + '%';
+    frame.style.height = (100 / zoomLevel) + '%';
+  }
+  function zoomIn()  { zoomLevel = Math.min(ZOOM_MAX, +(zoomLevel + ZOOM_STEP).toFixed(2)); applyZoom(); }
+  function zoomOut() { zoomLevel = Math.max(ZOOM_MIN, +(zoomLevel - ZOOM_STEP).toFixed(2)); applyZoom(); }
+
+  /* ── Report Issue ── */
+  function reportIssue() {
+    const subject = encodeURIComponent('Issue Report: Neal.fun Embed');
+    const body    = encodeURIComponent('Describe the issue you encountered:\n\n');
+    window.open('mailto:?subject=' + subject + '&body=' + body);
+  }
+
+  /* ── Close ── */
+  function closePage() {
+    if (window.history.length > 1) window.history.back();
+    else window.close();
+  }
+</script>
+</body>
+</html>
