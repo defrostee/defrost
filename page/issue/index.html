@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defrost | Report Issue</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%; background: #000; overflow: hidden;
+    font-family: 'Space Mono', monospace; color: #3a8fcf;
+    scrollbar-width: none;
+  }
+  ::-webkit-scrollbar { display: none; }
+
+  /* subtle grid bg */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(26,58,92,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,58,92,0.15) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .shell {
+    display: flex; flex-direction: column; height: 100vh; width: 100vw;
+    position: relative;
+  }
+
+  /* ── top bar ── */
+  .topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border-bottom: 1px solid #1a3a5c;
+    background: #000; flex-shrink: 0; z-index: 10;
+  }
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #3a8fcf; text-decoration: none; transition: color 0.2s; white-space: nowrap;
+  }
+  .back-btn:hover { color: #00c8ff; }
+  .divider { width: 1px; height: 18px; background: #1a3a5c; }
+  .page-title {
+    font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #fff; flex: 1;
+  }
+
+  /* ── progress bar ── */
+  .progress-wrap {
+    height: 2px; background: #0d1f3c; flex-shrink: 0; position: relative;
+  }
+  .progress-bar {
+    height: 100%; background: #3a8fcf;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 8px rgba(58,143,207,0.6);
+  }
+
+  /* ── main stage ── */
+  .stage {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 32px 24px; position: relative; overflow: hidden;
+  }
+
+  /* ── question card ── */
+  .question {
+    width: min(540px, 100%); display: flex; flex-direction: column; gap: 20px;
+    position: absolute;
+  }
+
+  .q-step {
+    font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #1e4d7b;
+  }
+
+  .q-title {
+    font-family: 'Oswald', sans-serif; font-size: clamp(20px, 3.5vw, 30px);
+    font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: #fff; line-height: 1.2;
+  }
+
+  .q-desc {
+    font-size: 10px; letter-spacing: 0.07em; line-height: 1.9;
+    color: #5a9abf; margin-top: -6px;
+  }
+
+  .q-input {
+    background: #000; border: 1px solid #1a3a5c; color: #a8d8f0;
+    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.06em;
+    padding: 13px 16px; outline: none; width: 100%;
+    transition: border-color 0.2s; resize: none;
+  }
+  .q-input:focus { border-color: #3a8fcf; }
+  .q-input::placeholder { color: #1e4d7b; }
+
+  textarea.q-input { min-height: 110px; line-height: 1.7; }
+
+  /* ── action row ── */
+  .action-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+
+  .next-btn {
+    background: none; border: 1px solid #3a8fcf; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 10px 24px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .next-btn:hover {
+    border-color: #00c8ff; color: #00c8ff;
+    box-shadow: 0 0 16px rgba(0,200,255,0.12);
+  }
+  .next-btn svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .skip-btn {
+    background: none; border: none; color: #1e4d7b;
+    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em;
+    text-transform: uppercase; cursor: pointer; padding: 0;
+    transition: color 0.2s;
+  }
+  .skip-btn:hover { color: #3a8fcf; }
+
+  .submit-btn {
+    background: none; border: 1px solid #3a8fcf; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 10px 24px; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .submit-btn:hover {
+    border-color: #00c8ff; color: #00c8ff;
+    box-shadow: 0 0 16px rgba(0,200,255,0.12);
+  }
+  .submit-btn svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ── animations ── */
+  @keyframes enterRight {
+    from { opacity: 0; transform: translateX(48px); filter: blur(8px); }
+    to   { opacity: 1; transform: translateX(0);    filter: blur(0); }
+  }
+  @keyframes exitLeft {
+    from { opacity: 1; transform: translateX(0);     filter: blur(0); }
+    to   { opacity: 0; transform: translateX(-48px); filter: blur(8px); }
+  }
+  @keyframes enterLeft {
+    from { opacity: 0; transform: translateX(-48px); filter: blur(8px); }
+    to   { opacity: 1; transform: translateX(0);     filter: blur(0); }
+  }
+  @keyframes exitRight {
+    from { opacity: 1; transform: translateX(0);    filter: blur(0); }
+    to   { opacity: 0; transform: translateX(48px); filter: blur(8px); }
+  }
+
+  .anim-enter-right { animation: enterRight 0.32s cubic-bezier(0.2,0,0,1) forwards; }
+  .anim-exit-left   { animation: exitLeft  0.22s cubic-bezier(0.4,0,1,1) forwards; }
+  .anim-enter-left  { animation: enterLeft 0.32s cubic-bezier(0.2,0,0,1) forwards; }
+  .anim-exit-right  { animation: exitRight 0.22s cubic-bezier(0.4,0,1,1) forwards; }
+
+  /* ── success screen ── */
+  .success {
+    width: min(540px, 100%); display: flex; flex-direction: column;
+    align-items: center; gap: 20px; text-align: center;
+    position: absolute; opacity: 0;
+  }
+  .success.visible { animation: enterRight 0.4s cubic-bezier(0.2,0,0,1) forwards; }
+  .success-icon {
+    width: 48px; height: 48px; border: 1px solid #1a3a5c;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .success-icon svg { width: 20px; height: 20px; fill: none; stroke: #3a8fcf; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .success-title {
+    font-family: 'Oswald', sans-serif; font-size: 26px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #fff;
+  }
+  .success-desc { font-size: 10px; letter-spacing: 0.07em; line-height: 1.9; color: #5a9abf; }
+  .success-back {
+    background: none; border: 1px solid #1a3a5c; color: #3a8fcf;
+    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 9px 20px; cursor: pointer;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    transition: border-color 0.2s, color 0.2s; margin-top: 4px;
+  }
+  .success-back:hover { border-color: #00c8ff; color: #00c8ff; }
+  .success-back svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- top bar -->
+  <div class="topbar">
+    <a href="https://defrostee.github.io/defrost/page/games/index.html" class="back-btn">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M10 3L5 8l5 5"/></svg>
+      Back
+    </a>
+    <div class="divider"></div>
+    <div class="page-title">Report Issue</div>
+  </div>
+
+  <!-- progress -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar" style="width:20%"></div>
+  </div>
+
+  <!-- stage -->
+  <div class="stage" id="stage">
+
+    <!-- Q1: Email -->
+    <div class="question anim-enter-right" id="q1">
+      <div class="q-step">Question 1 of 5</div>
+      <div class="q-title">Please enter your email address:</div>
+      <div class="q-desc">We will use this to contact you when we fix the issue!</div>
+      <input class="q-input" id="f-email" type="email" placeholder="kevin@defrostee.com" autocomplete="off">
+      <div class="action-row">
+        <button class="next-btn" onclick="next(1)">
+          Next
+          <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q2: Which game -->
+    <div class="question hidden" id="q2">
+      <div class="q-step">Question 2 of 5</div>
+      <div class="q-title">Which game/app is this in?</div>
+      <div class="q-desc">This helps us pinpoint where the issue is located!</div>
+      <input class="q-input" id="f-game" type="text" placeholder="Issue is located in..." autocomplete="off">
+      <div class="action-row">
+        <button class="next-btn" onclick="next(2)">
+          Next
+          <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q3: Describe issue -->
+    <div class="question hidden" id="q3">
+      <div class="q-step">Question 3 of 5</div>
+      <div class="q-title">Please describe the issue:</div>
+      <div class="q-desc">This helps us understand what is truly going on!</div>
+      <textarea class="q-input" id="f-desc" placeholder="It shows..."></textarea>
+      <div class="action-row">
+        <button class="next-btn" onclick="next(3)">
+          Next
+          <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q4: Social links (optional) -->
+    <div class="question hidden" id="q4">
+      <div class="q-step">Question 4 of 5</div>
+      <div class="q-title">Please enter your social links:</div>
+      <div class="q-desc">This is optional, but helps us credit you!</div>
+      <input class="q-input" id="f-social" type="text" placeholder="@defrostee on Github" autocomplete="off"
+             oninput="updateQ4Btn()">
+      <div class="action-row">
+        <button class="next-btn" id="q4Btn" onclick="next(4)">
+          Skip
+          <svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q5: Suggestions (optional) -->
+    <div class="question hidden" id="q5">
+      <div class="q-step">Question 5 of 5</div>
+      <div class="q-title">Please enter any suggestions you may have:</div>
+      <div class="q-desc">This is optional, but helps us as well!</div>
+      <textarea class="q-input" id="f-suggest" placeholder="I wish you'd add..."
+                oninput="updateQ5Btn()"></textarea>
+      <div class="action-row">
+        <button class="submit-btn" id="q5Btn" onclick="submitForm()">
+          Submit
+          <svg viewBox="0 0 16 16"><polyline points="2,8 6,12 14,4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success hidden" id="success">
+      <div class="success-icon">
+        <svg viewBox="0 0 16 16"><polyline points="2,8 6,12 14,4"/></svg>
+      </div>
+      <div class="success-title">Report Submitted</div>
+      <div class="success-desc">
+        Thanks for letting us know!<br>
+        We'll look into it and reach out if we need more info.
+      </div>
+      <a href="https://defrostee.github.io/defrost/page/games/index.html" class="success-back">
+        <svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg>
+        Back to Games
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<!-- hidden form that submits to Formspree -->
+<form id="hiddenForm" action="https://formspree.io/f/xgopwojr" method="POST" style="display:none">
+  <input type="hidden" name="email"       id="hf-email">
+  <input type="hidden" name="game"        id="hf-game">
+  <input type="hidden" name="description" id="hf-desc">
+  <input type="hidden" name="social"      id="hf-social">
+  <input type="hidden" name="suggestions" id="hf-suggest">
+</form>
+
+<script>
+  // ── CONFIG ──────────────────────────────────────────────────────────────────
+  // Replace with your Formspree endpoint after signing up at formspree.io
+  const FORMSPREE_URL = 'https://formspree.io/f/xgopwojr';
+  // ────────────────────────────────────────────────────────────────────────────
+
+  const TOTAL = 5;
+  let current = 1;
+
+  const progressBar = document.getElementById('progressBar');
+
+  function updateProgress(step) {
+    progressBar.style.width = (step / TOTAL * 100) + '%';
+  }
+
+  function transition(fromId, toId, direction) {
+    const from = document.getElementById(fromId);
+    const to   = document.getElementById(toId);
+
+    const exitAnim  = direction === 'next' ? 'anim-exit-left'  : 'anim-exit-right';
+    const enterAnim = direction === 'next' ? 'anim-enter-right' : 'anim-enter-left';
+
+    from.classList.add(exitAnim);
+
+    setTimeout(() => {
+      from.classList.remove(exitAnim);
+      from.classList.add('hidden');
+      to.classList.remove('hidden');
+      to.classList.add(enterAnim);
+      setTimeout(() => to.classList.remove(enterAnim), 350);
+    }, 220);
+  }
+
+  function next(from) {
+    const to = from + 1;
+    current = to;
+    updateProgress(to);
+    transition('q' + from, 'q' + to, 'next');
+  }
+
+  // Q4 skip/next toggle
+  function updateQ4Btn() {
+    const val = document.getElementById('f-social').value.trim();
+    const btn = document.getElementById('q4Btn');
+    btn.innerHTML = val
+      ? 'Next <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M6 3l5 5-5 5"/></svg>'
+      : 'Skip <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M6 3l5 5-5 5"/></svg>';
+  }
+
+  // Q5 skip/submit toggle
+  function updateQ5Btn() {
+    const val = document.getElementById('f-suggest').value.trim();
+    const btn = document.getElementById('q5Btn');
+    btn.innerHTML = val
+      ? 'Submit <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="2,8 6,12 14,4"/></svg>'
+      : 'Skip & Submit <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="2,8 6,12 14,4"/></svg>';
+  }
+
+  async function submitForm() {
+    // Copy values into hidden form
+    document.getElementById('hf-email').value   = document.getElementById('f-email').value;
+    document.getElementById('hf-game').value    = document.getElementById('f-game').value;
+    document.getElementById('hf-desc').value    = document.getElementById('f-desc').value;
+    document.getElementById('hf-social').value  = document.getElementById('f-social').value;
+    document.getElementById('hf-suggest').value = document.getElementById('f-suggest').value;
+
+    // Submit via fetch to avoid page redirect
+    const data = new FormData(document.getElementById('hiddenForm'));
+    data.set('_replyto', document.getElementById('f-email').value);
+
+    try {
+      await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+    } catch(e) {
+      // Still show success — don't leave user hanging
+    }
+
+    // Show success screen
+    const q5 = document.getElementById('q5');
+    q5.classList.add('anim-exit-left');
+    setTimeout(() => {
+      q5.classList.add('hidden');
+      const s = document.getElementById('success');
+      s.classList.remove('hidden');
+      s.classList.add('visible');
+      progressBar.style.width = '100%';
+      progressBar.style.background = '#00c8ff';
+    }, 220);
+  }
+
+  // Allow Enter key to advance
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    const active = document.querySelector('.question:not(.hidden)');
+    if (!active) return;
+    const btn = active.querySelector('.next-btn, .submit-btn');
+    if (btn) btn.click();
+  });
+</script>
+</body>
+</html>
